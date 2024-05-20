@@ -1,0 +1,116 @@
+/* src/UserProfile.css */
+
+.user-profile-container {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 200px;
+  background-color: #f0f0f0;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+.user-profile-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header-profile-picture {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.profile-card, .stats-cards {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.profile-card h3 {
+  margin-bottom: 15px;
+}
+
+.profile-info label {
+  display: block;
+  margin: 10px 0 5px;
+}
+
+.profile-info input, .profile-info textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.profile-info textarea {
+  resize: vertical;
+}
+
+.profile-info button {
+  padding: 10px 20px;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.profile-info button:disabled {
+  background: #aaa;
+}
+
+.error {
+  color: red;
+  margin-bottom: 10px;
+}
+
+.stats-cards {
+  display: flex;
+  justify-content: space-between;
+}
+
+.stats-card {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.stats-card:last-child {
+  margin-right: 0;
+}
+
+.stats-card h3 {
+  margin-bottom: 15px;
+}
+
+.stats-card ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.stats-card ul li {
+  margin: 5px 0;
+}

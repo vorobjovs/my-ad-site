@@ -1,0 +1,79 @@
+/* src/pages/PostAd.css */
+
+.post-ad-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .post-ad-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .post-ad-container form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .post-ad-container form label {
+    margin: 10px 0 5px;
+  }
+  
+  .post-ad-container form input[type="text"],
+  .post-ad-container form input[type="number"],
+  .post-ad-container form input[type="file"],
+  .post-ad-container form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+  
+  .post-ad-container form input[type="checkbox"] {
+    margin-right: 10px;
+  }
+  
+  .photo-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .photo-preview img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+  }
+  
+  .post-ad-container form button {
+    padding: 10px 20px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .post-ad-container form button:disabled {
+    background: #aaa;
+  }
+  
+  .post-ad-container form p {
+    text-align: center;
+    color: #007bff;
+  }
+  
+  .success-message {
+    text-align: center;
+    color: #28a745;
+    margin-top: 10px;
+  }
+  

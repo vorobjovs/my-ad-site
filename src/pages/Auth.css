@@ -1,0 +1,132 @@
+/* Auth.css */
+
+/* Container */
+.auth-container {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 30px;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Header */
+  .auth-container h2 {
+    text-align: center;
+    margin-bottom: 10px;
+    color: #4a4a4a;
+  }
+  
+  .auth-container h4 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #4a4a4a;
+    font-weight: normal;
+  }
+  
+  /* Form */
+  .auth-container form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .auth-container form div {
+    margin-bottom: 20px;
+  }
+  
+  .auth-container form label {
+    display: block;
+    margin-bottom: 5px;
+    color: #4a4a4a;
+    font-weight: 500;
+  }
+  
+  .auth-container form input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .auth-container form input:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .auth-container form input:focus {
+    background-color: #e9f0fc;
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  /* Button */
+  .auth-container form button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .auth-container form button:hover {
+    background-color: #0056b3;
+  }
+  
+  .auth-container form button:disabled {
+    background-color: #a6a6a6;
+  }
+  
+  /* Links */
+  .auth-footer {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .auth-footer a {
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .auth-footer a:hover {
+    color: #0056b3;
+  }
+  
+  .forgot-password {
+    float: right;
+  }
+  
+  .error {
+    color: red;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  
+  .message {
+    color: green;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  
+  /* Social Media Links */
+  .social-media {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+  }
+  
+  .social-media a {
+    margin: 0 10px;
+    color: #007bff;
+    font-size: 18px;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .social-media a:hover {
+    color: #0056b3;
+  }
+  
