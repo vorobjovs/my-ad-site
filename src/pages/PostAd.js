@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, storage } from '../firebase';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, getDoc} from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../contexts/AuthContext';
 import './PostAd.css';
@@ -49,6 +49,10 @@ const PostAd = () => {
         })
       );
 
+      // Fetch the user's name and profile picture URL
+      const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+      const userData = userDoc.data();
+
       // Save the ad information to Firestore
       await addDoc(collection(db, 'ads'), {
         title,
@@ -57,6 +61,8 @@ const PostAd = () => {
         category,
         photos: uploadedPhotos,
         userId: currentUser.uid,
+        userName: userData.name,
+        userProfilePicture: userData.profilePictureUrl,
         verifiedUsersOnly,
         requirements,
         blurThumbnail,

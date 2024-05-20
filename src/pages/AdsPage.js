@@ -56,6 +56,12 @@ const AdsPage = () => {
         {filteredAds.map(ad => (
           <div className="ad-card" key={ad.id}>
             <img src={ad.photos[0]} alt={ad.title} className="ad-image" />
+            <div className="ad-user-info">
+              <Link to={`/profile/${ad.userId}`}>
+                <img src={ad.userProfilePicture} alt={ad.userName} className="user-profile-picture" />
+                <span>{ad.userName}</span>
+              </Link>
+            </div>
             <h2>{ad.title}</h2>
             <p>{ad.price}</p>
             <Link to={`/ad/${ad.id}`} className="view-button">View</Link>
