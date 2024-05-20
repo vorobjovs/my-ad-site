@@ -16,6 +16,9 @@ import './App.css';
 import { AuthProvider } from './contexts/AuthContext';
 import AdDetail from './pages/AdDetail';
 import Favourites from './pages/Favourites';
+import ForgotPassword from './pages/ForgotPassword'; // Added this import
+import HomePage from './pages/HomePage'; // Added this import
+import UserProfile from './pages/UserProfile'; // Added this import
 
 function App() {
   return (
@@ -35,6 +38,9 @@ function App() {
               <Route path="/ads" element={<AdsPage />} />
               <Route path="/favourites" element={<PrivateRoute component={Favourites} />} />
               <Route path="/ad/:id" element={<AdDetail />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} /> {/* Added this route */}
+              <Route path="/homepage" element={<HomePage />} /> {/* Added this route */}
+              <Route path="/userprofile" element={<PrivateRoute component={UserProfile} />} /> {/* Added this route */}
             </Routes>
           </div>
         </div>
