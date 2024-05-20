@@ -6,7 +6,7 @@ import { getAuth } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDloa1oIsT6BkW-6wOf1AOHDPYLO0wedI4",
+    apiKey: "secret key",
     authDomain: "first-ad-firebase.firebaseapp.com",
     projectId: "first-ad-firebase",
     storageBucket: "first-ad-firebase.appspot.com",
