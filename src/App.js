@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import UserDashboard from './pages/UserDashboard';
 import EditProfile from './pages/EditProfile';
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
@@ -32,7 +31,6 @@ function App() {
               <Route path="/signup" element={<SignUp />} />
               <Route path="/simple-upload" element={<SimpleUpload />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/dashboard" element={<PrivateRoute component={UserDashboard} />} />
               <Route path="/edit-profile" element={<PrivateRoute component={EditProfile} />} />
               <Route path="/post-ad" element={<PrivateRoute component={PostAd} />} />
               <Route path="/ads" element={<AdsPage />} />

@@ -33,7 +33,6 @@ const Navigation = () => {
         <li><button onClick={() => navigate('/homepage')}>Home Page</button></li>
         <li><button onClick={() => navigate('/login')}>Login</button></li>
         <li><button onClick={() => navigate('/signup')}>Sign Up</button></li>
-        <li><button onClick={() => navigate('/userdashboard')}>User Dashboard</button></li>
         <li><button onClick={() => navigate('/userprofile')}>User Profile</button></li>
         {currentUser ? (
           <li><button onClick={handleLogout}>Log Out</button></li>
