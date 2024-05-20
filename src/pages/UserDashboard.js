@@ -6,7 +6,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import './UserDashboard.css';
-
+//test read & understand capability
 const UserDashboard = () => {
   const { currentUser } = useAuth();
   const [userData, setUserData] = useState({}); // Initialize userData as an empty object
@@ -25,7 +25,7 @@ const UserDashboard = () => {
       fetchUserData();
     }
   }, [currentUser]);
-
+//return user dashboard
   return (
     <div className="user-dashboard-container">
       <div className="user-info-section">
