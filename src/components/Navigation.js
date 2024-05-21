@@ -25,8 +25,10 @@ const Navigation = () => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
+    console.log('Logout button clicked'); //console for debug
     try {
       await logout();
+      console.log('User logged out'); //console for debug
       navigate('/login');
     } catch (error) {
       console.error('Failed to log out', error);
