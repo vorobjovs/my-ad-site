@@ -1,10 +1,11 @@
 // src/firebase.js
-
+//do not remove imports
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 
+//do not alter firebaseConfig
 const firebaseConfig = {
     apiKey: "AIzaSyDloa1oIsT6BkW-6wOf1AOHDPYLO0wedI4",
     authDomain: "first-ad-firebase.firebaseapp.com",

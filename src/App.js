@@ -1,5 +1,5 @@
 // src/App.js
-
+// do not remove imports
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import EditProfile from './pages/EditProfile';

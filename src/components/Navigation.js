@@ -1,10 +1,25 @@
 // src/components/Navigation.js
-
+//do not remove imports
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { Menu } from 'antd';
 import './Navigation.css';
-// format navigation as buttons to allow for easier css formatting.
+//import menu item icons
+import {
+  HomeOutlined,
+  UserOutlined,
+  PlusOutlined,
+  AppstoreOutlined,
+  HeartOutlined,
+  LogoutOutlined,
+  LoginOutlined,
+  UserAddOutlined,
+  KeyOutlined
+} from '@ant-design/icons';
+import ForgotPassword from '../pages/ForgotPassword';
+
+
 const Navigation = () => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
@@ -17,32 +32,38 @@ const Navigation = () => {
       console.error('Failed to log out', error);
     }
   };
-
+//do not remove menu items
   return (
     <nav className="navigation">
       <div className="navigation-header">
         <h2>My Ad Site</h2>
       </div>
-      <ul>
-        <li><button onClick={() => navigate('/')}>Home</button></li>
-        <li><button onClick={() => navigate('/edit-profile')}>Edit Profile</button></li>
-        <li><button onClick={() => navigate('/post-ad')}>Post Ad</button></li>
-        <li><button onClick={() => navigate('/ads')}>Ads</button></li>
-        <li><button onClick={() => navigate('/favourites')}>Favourites</button></li>
-        <li><button onClick={() => navigate('/forgot-password')}>Forgot Password</button></li>
-        <li><button onClick={() => navigate('/homepage')}>Home Page</button></li>
-        <li><button onClick={() => navigate('/login')}>Login</button></li>
-        <li><button onClick={() => navigate('/signup')}>Sign Up</button></li>
-        <li><button onClick={() => navigate('/userprofile')}>User Profile</button></li>
-        {currentUser ? (
-          <li><button onClick={handleLogout}>Log Out</button></li>
-        ) : (
-          <>
-            <li><button onClick={() => navigate('/signup')}>Sign Up</button></li>
-            <li><button onClick={() => navigate('/login')}>Log In</button></li>
-          </>
-        )}
-      </ul>
+      <Menu mode="inline" theme="dark" className="navigation">
+      <Menu.Item key="home" icon={<HomeOutlined />} onClick={() => navigate('/')}>
+        Home
+      </Menu.Item>
+        <Menu.Item key="profile" icon={<UserOutlined />} onClick={() => navigate('/userprofile')}>
+        User Profile </Menu.Item>
+      <Menu.Item key="post-ad" icon={<PlusOutlined />} onClick={() => navigate('/post-ad')}>
+        Post Ad </Menu.Item>
+      <Menu.Item key="ads" icon={<AppstoreOutlined />} onClick={() => navigate('/ads')}>
+        Ads Page </Menu.Item>
+      <Menu.Item key="favourites" icon={<HeartOutlined />} onClick={() => navigate('/favourites')}>
+        Favourites </Menu.Item>
+      {currentUser ? (
+        <Menu.Item key="logout" icon={<LogoutOutlined />} onClick={handleLogout}>
+          Log Out </Menu.Item>
+      ) : (
+        <>
+          <Menu.Item key="signup" icon={<UserAddOutlined />} onClick={() => navigate('/signup')}>
+            Sign Up </Menu.Item>
+          <Menu.Item key="login" icon={<LoginOutlined />} onClick={() => navigate('/login')}>
+            Log In </Menu.Item>
+        <Menu.Item key="/forgot-password" icon={<KeyOutlined />} onClick={() => navigate('/forgot-password')}>
+          Forgot Password</Menu.Item>
+        </>
+      )}
+      </Menu>
     </nav>
   );
 };
