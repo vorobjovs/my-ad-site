@@ -44,6 +44,9 @@ const Navigation = () => {
       <Menu.Item key="home" icon={<HomeOutlined />} onClick={() => navigate('/')}>
         Home
       </Menu.Item>
+      <Menu.Item key="edit-profile" icon={<HomeOutlined />} onClick={() => navigate('/edit-profile')}>
+        Edit Profile
+      </Menu.Item>
         <Menu.Item key="profile" icon={<UserOutlined />} onClick={() => navigate('/userprofile')}>
         User Profile </Menu.Item>
       <Menu.Item key="post-ad" icon={<PlusOutlined />} onClick={() => navigate('/post-ad')}>

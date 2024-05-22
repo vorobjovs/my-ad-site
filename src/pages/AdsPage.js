@@ -2,49 +2,60 @@
 
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
 import './AdsPage.css';
 
 const AdsPage = () => {
   const [ads, setAds] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [users, setUsers] = useState({});
 
   useEffect(() => {
     const fetchAds = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'ads'));
-        const adsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setAds(adsData);
-      } catch (error) {
-        setError('Failed to load ads.');
-        console.error('Error fetching ads:', error);
-      } finally {
-        setLoading(false);
-      }
+      const adsSnapshot = await getDocs(collection(db, 'ads'));
+      const adsList = adsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      // Fetch user data for each ad
+      const userPromises = adsList.map(async (ad) => {
+        const userDoc = await getDoc(doc(db, 'users', ad.userId));
+        return { userId: ad.userId, userData: userDoc.data() };
+      });
+
+      const usersData = await Promise.all(userPromises);
+      const usersMap = usersData.reduce((acc, user) => {
+        acc[user.userId] = user.userData;
+        return acc;
+      }, {});
+
+      setUsers(usersMap);
+      setAds(adsList);
     };
 
     fetchAds();
   }, []);
 
-  if (loading) return <p>Loading ads...</p>;
-  if (error) return <p>{error}</p>;
-
   return (
     <div className="ads-page">
       <h1>Ads</h1>
-      <div className="ads-grid">
+      <div className="ads-list">
         {ads.map(ad => (
-          <div key={ad.id} className="ad-card">
-            <Link to={`/ad/${ad.id}`}>
-              {ad.photos && ad.photos.length > 0 && (
-                <img src={ad.photos[0]} alt={ad.title} className="ad-image" />
-              )}
-              <h3>{ad.title}</h3>
+          <div key={ad.id} className="ad-item">
+            <div className="ad-header">
+              <img src={users[ad.userId]?.profilePictureUrl || 'default-profile.png'} alt="User Profile" className="ad-user-image" />
+              <Link to={`/profile/${ad.userId}`} className="ad-user-name">{users[ad.userId]?.name || 'Unknown User'}</Link>
+            </div>
+            <div className="ad-content">
+              <h2>{ad.title}</h2>
               <p>{ad.description}</p>
-              <p>Price: ${ad.price}</p>
-            </Link>
+              <p><strong>Price: </strong>{ad.price}</p>
+              <div className="ad-photos">
+                {ad.photos.map((url, index) => (
+                  <img key={index} src={url} alt={`Ad Photo ${index}`} />
+                ))}
+              </div>
+              <Link to={`/ad/${ad.id}`} className="view-button">View</Link>
+              <button className="favourite-button">Favourite</button>
+            </div>
           </div>
         ))}
       </div>
