@@ -202,23 +202,5 @@ const UserProfile = () => {
     </div>
   );
 };
-const saveUserProfile = async (profilePictureUrl = '') => {
-  try {
-    const docRef = doc(db, 'users', currentUser.uid);
-    await setDoc(docRef, {
-      name,
-      email,
-      profilePictureUrl,
-      bio,
-      profileCategory,
-      role: 'seller', // or 'buyer'
-      verified: false,
-    }, { merge: true });
-    alert('Profile updated!');
-  } catch (error) {
-    console.error("Error saving document:", error);
-    setError("Error saving user profile. Please try again later.");
-  }
-};
 
 export default UserProfile;
