@@ -130,16 +130,6 @@ const UserProfile = () => {
 
   return (
     <div className="user-profile-container">
-      <div className="sidebar">
-        <ul>
-          <li>Dashboard</li>
-          <li>Accounts</li>
-          <li>Mobile</li>
-          <li>Payments</li>
-          <li>Companies</li>
-          <li>Supports</li>
-        </ul>
-      </div>
       <div className="user-profile-content">
         <div className="header">
           <h1>My dashboard</h1>
