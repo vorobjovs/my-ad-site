@@ -43,6 +43,11 @@
   height: 30px;
   cursor: pointer;
   font-size: 20px;
+  color: #000;
+}
+
+.favourite-button.favourited {
+  color: red;
 }
 
 .favourite-button:hover {

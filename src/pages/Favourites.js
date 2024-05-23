@@ -1,3 +1,5 @@
+// src/pages/Favourites.js
+
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import { collection, getDocs, doc, getDoc, setDoc } from 'firebase/firestore';
@@ -81,7 +83,9 @@ const Favourites = () => {
               <Link to={`/ad/${ad.id}`}>
                 <img src={ad.photos[0]} alt="Ad image" className="ad-image" />
               </Link>
-              <button className="favourite-button" onClick={(e) => { e.stopPropagation(); handleFavourite(ad.id); }}>
+              <button
+                className={`favourite-button ${currentUser?.favouritedAds?.includes(ad.id) ? 'favourited' : ''}`}
+                onClick={() => handleFavourite(ad.id)}>
                 {currentUser?.favouritedAds?.includes(ad.id) ? '♥' : '♡'}
               </button>
             </div>
