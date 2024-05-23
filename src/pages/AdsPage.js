@@ -71,7 +71,7 @@ const AdsPage = () => {
                 <img src={ad.photos[0]} alt="Ad image" className="ad-image" />
               </Link>
               <button className="favourite-button" onClick={(e) => { e.stopPropagation(); handleFavourite(ad.id); }}>
-                {currentUser?.favouritedAds?.includes(ad.id) ? '♥' : '♡'}
+                {currentUser?.favouritedAds?.includes(ad.id) ? 'C' : 'D'}
               </button>
             </div>
             <div className="ad-content">
