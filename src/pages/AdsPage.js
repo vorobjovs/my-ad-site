@@ -1,3 +1,4 @@
+//test
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import { collection, getDocs, doc, getDoc, setDoc } from 'firebase/firestore';
@@ -9,7 +10,7 @@ const AdsPage = () => {
   const [ads, setAds] = useState([]);
   const [users, setUsers] = useState({});
   const { currentUser } = useAuth();
-
+//test
   useEffect(() => {
     const fetchAds = async () => {
       const adsSnapshot = await getDocs(collection(db, 'ads'));
@@ -49,7 +50,8 @@ const AdsPage = () => {
           await setDoc(userRef, { favouritedAds: [...favouritedAds, adId] }, { merge: true });
           alert('Ad added to favourites!');
         } else {
-          alert('Ad is already in favourites.');
+          await setDoc(userRef, { favouritedAds: favouritedAds.filter(id => id !== adId) }, { merge: true });
+          alert('Ad removed from favourites.');
         }
       }
     } catch (error) {
@@ -59,26 +61,30 @@ const AdsPage = () => {
 
   return (
     <div className="ads-page">
-      <h1>Ads</h1>
+      <h1>Ads</h1> 
       <div className="ads-grid">
         {ads.map(ad => (
-          <Link to={`/ad/${ad.id}`} key={ad.id} className="ad-item-link">
-            <div className="ad-item">
-              <div className="ad-header">
+          <div key={ad.id} className="ad-item">
+            <div className="ad-header">
+              <Link to={`/ad/${ad.id}`}>
                 <img src={ad.photos[0]} alt="Ad image" className="ad-image" />
-                <button className="favourite-button" onClick={(e) => { e.stopPropagation(); handleFavourite(ad.id); }}>♡</button>
-              </div>
-              <div className="ad-content">
-                <h2>{ad.title}</h2>
-                <div className="ad-user-info">
-                  <img src={users[ad.userId]?.profilePictureUrl || 'default-profile.png'} alt="User Profile" className="ad-user-image" />
-                  <span>{users[ad.userId]?.name || 'Unknown User'}</span>
-                </div>
-                <p className="ad-price">{`$${ad.price}`}</p>
-                <div className="view-button">Offer</div>
-              </div>
+              </Link>
+              <button className="favourite-button" onClick={(e) => { e.stopPropagation(); handleFavourite(ad.id); }}>
+                {users[currentUser?.uid]?.favouritedAds?.includes(ad.id) ? '♥' : '♡'}
+              </button>
             </div>
-          </Link>
+            <div className="ad-content">
+              <h2>{ad.title}</h2>
+              <div className="ad-user-info">
+                <Link to={`/profile/${ad.userId}`}>
+                  <img src={users[ad.userId]?.profilePictureUrl || 'default-profile.png'} alt="User Profile" className="ad-user-image" />
+                </Link>
+                <Link to={`/profile/${ad.userId}`} className="ad-user-name">{users[ad.userId]?.name || 'Unknown User'}</Link>
+              </div>
+              <p className="ad-price">{`$${ad.price}`}</p>
+              <Link to={`/ad/${ad.id}`} className="view-button">Offer</Link>
+            </div>
+          </div>
         ))}
       </div>
     </div>
