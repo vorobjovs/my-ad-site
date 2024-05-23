@@ -83,7 +83,7 @@ const AdsPage = () => {
                 <Link to={`/profile/${ad.userId}`} className="ad-user-name">{users[ad.userId]?.name || 'Unknown User'}</Link>
               </div>
               <p className="ad-price">{`$${ad.price}`}</p>
-              <Link to={`/ad/${ad.id}`} className="view-button">Offer</Link>
+              <Link to={`/ad/${ad.id}`} className="view-button">View</Link>
             </div>
           </div>
         ))}

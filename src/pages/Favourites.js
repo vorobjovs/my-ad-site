@@ -1,68 +1,99 @@
-// src/pages/Favourites.js
-
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, setDoc } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 import './Favourites.css';
+import { useAuth } from '../contexts/AuthContext';
 
 const Favourites = () => {
-  const { currentUser } = useAuth();
-  const [favouritedAds, setFavouritedAds] = useState([]);
+  const [favouriteAds, setFavouriteAds] = useState([]);
   const [users, setUsers] = useState({});
+  const { currentUser } = useAuth();
 
   useEffect(() => {
-    const fetchFavourites = async () => {
-      if (currentUser) {
-        const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          const favouriteAdIds = userData.favourites || [];
+    const fetchFavouriteAds = async () => {
+      if (!currentUser) return;
+      
+      const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        const favouritedAdsIds = userData.favouritedAds || [];
 
-          const adPromises = favouriteAdIds.map(adId => getDoc(doc(db, 'ads', adId)));
-          const adDocs = await Promise.all(adPromises);
-          const adsList = adDocs.map(adDoc => ({ id: adDoc.id, ...adDoc.data() }));
+        const adsPromises = favouritedAdsIds.map(async (adId) => {
+          const adDoc = await getDoc(doc(db, 'ads', adId));
+          return { id: adDoc.id, ...adDoc.data() };
+        });
 
-          const userPromises = adsList.map(async (ad) => {
-            const userDoc = await getDoc(doc(db, 'users', ad.userId));
-            return { userId: ad.userId, userData: userDoc.data() };
-          });
+        const adsList = await Promise.all(adsPromises);
 
-          const usersData = await Promise.all(userPromises);
-          const usersMap = usersData.reduce((acc, user) => {
-            acc[user.userId] = user.userData;
-            return acc;
-          }, {});
+        const userPromises = adsList.map(async (ad) => {
+          const userDoc = await getDoc(doc(db, 'users', ad.userId));
+          return { userId: ad.userId, userData: userDoc.data() };
+        });
 
-          setUsers(usersMap);
-          setFavouritedAds(adsList);
-        }
+        const usersData = await Promise.all(userPromises);
+        const usersMap = usersData.reduce((acc, user) => {
+          acc[user.userId] = user.userData;
+          return acc;
+        }, {});
+
+        setUsers(usersMap);
+        setFavouriteAds(adsList);
       }
     };
 
-    fetchFavourites();
+    fetchFavouriteAds();
   }, [currentUser]);
+
+  const handleFavourite = async (adId) => {
+    if (!currentUser) {
+      alert('Please log in to favourite ads.');
+      return;
+    }
+    try {
+      const userRef = doc(db, 'users', currentUser.uid);
+      const userDoc = await getDoc(userRef);
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        const favouritedAds = userData.favouritedAds || [];
+        if (!favouritedAds.includes(adId)) {
+          await setDoc(userRef, { favouritedAds: [...favouritedAds, adId] }, { merge: true });
+          alert('Ad added to favourites!');
+        } else {
+          await setDoc(userRef, { favouritedAds: favouritedAds.filter(id => id !== adId) }, { merge: true });
+          alert('Ad removed from favourites.');
+          setFavouriteAds(favouriteAds.filter(ad => ad.id !== adId));
+        }
+      }
+    } catch (error) {
+      console.error('Error updating favourites:', error);
+    }
+  };
 
   return (
     <div className="favourites-page">
       <h1>Favourites</h1>
-      <div className="ads-list">
-        {favouritedAds.map(ad => (
+      <div className="ads-grid">
+        {favouriteAds.map(ad => (
           <div key={ad.id} className="ad-item">
             <div className="ad-header">
-              <img src={users[ad.userId]?.profilePictureUrl || 'default-profile.png'} alt="User Profile" className="ad-user-image" />
-              <Link to={`/profile/${ad.userId}`} className="ad-user-name">{users[ad.userId]?.name || 'Unknown User'}</Link>
+              <Link to={`/ad/${ad.id}`}>
+                <img src={ad.photos[0]} alt="Ad image" className="ad-image" />
+              </Link>
+              <button className="favourite-button" onClick={(e) => { e.stopPropagation(); handleFavourite(ad.id); }}>
+                {currentUser?.favouritedAds?.includes(ad.id) ? '♥' : '♡'}
+              </button>
             </div>
             <div className="ad-content">
               <h2>{ad.title}</h2>
-              <p>{ad.description}</p>
-              <p><strong>Price: </strong>{ad.price}</p>
-              <div className="ad-photos">
-                {ad.photos.map((url, index) => (
-                  <img key={index} src={url} alt={`Ad Photo ${index}`} />
-                ))}
+              <div className="ad-user-info">
+                <Link to={`/profile/${ad.userId}`}>
+                  <img src={users[ad.userId]?.profilePictureUrl || 'default-profile.png'} alt="User Profile" className="ad-user-image" />
+                </Link>
+                <Link to={`/profile/${ad.userId}`} className="ad-user-name">{users[ad.userId]?.name || 'Unknown User'}</Link>
               </div>
+              <p className="ad-price">{`$${ad.price}`}</p>
               <Link to={`/ad/${ad.id}`} className="view-button">View</Link>
             </div>
           </div>
