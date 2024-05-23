@@ -2,13 +2,16 @@
 
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import './AdsPage.css';
 
 const AdsPage = () => {
+  const { currentUser } = useAuth();
   const [ads, setAds] = useState([]);
   const [users, setUsers] = useState({});
+  const [favouritedAds, setFavouritedAds] = useState([]);
 
   useEffect(() => {
     const fetchAds = async () => {
@@ -31,8 +34,38 @@ const AdsPage = () => {
       setAds(adsList);
     };
 
+    const fetchFavourites = async () => {
+      if (currentUser) {
+        const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setFavouritedAds(userData.favourites || []);
+        }
+      }
+    };
+
     fetchAds();
-  }, []);
+    fetchFavourites();
+  }, [currentUser]);
+
+  const handleFavourite = async (adId) => {
+    if (!currentUser) return alert('You need to log in to favourite ads.');
+
+    const userDocRef = doc(db, 'users', currentUser.uid);
+    const adIsFavourited = favouritedAds.includes(adId);
+
+    if (adIsFavourited) {
+      await updateDoc(userDocRef, {
+        favourites: arrayRemove(adId)
+      });
+      setFavouritedAds(favouritedAds.filter(id => id !== adId));
+    } else {
+      await updateDoc(userDocRef, {
+        favourites: arrayUnion(adId)
+      });
+      setFavouritedAds([...favouritedAds, adId]);
+    }
+  };
 
   return (
     <div className="ads-page">
@@ -54,7 +87,12 @@ const AdsPage = () => {
                 ))}
               </div>
               <Link to={`/ad/${ad.id}`} className="view-button">View</Link>
-              <button className="favourite-button">Favourite</button>
+              <button 
+                className="favourite-button" 
+                onClick={() => handleFavourite(ad.id)}
+              >
+                {favouritedAds.includes(ad.id) ? 'Unfavourite' : 'Favourite'}
+              </button>
             </div>
           </div>
         ))}
