@@ -1,10 +1,9 @@
-// src/contexts/AuthContext.js
+import React, { useContext, useState, useEffect } from 'react';
+import { auth, db } from '../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 
-import React, { useContext, useState, useEffect, createContext } from 'react';
-import { auth } from '../firebase';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-
-const AuthContext = createContext();
+const AuthContext = React.createContext();
 
 export function useAuth() {
   return useContext(AuthContext);
@@ -15,21 +14,25 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        setCurrentUser({ uid: user.uid, ...userDoc.data() });
+      } else {
+        setCurrentUser(null);
+      }
       setLoading(false);
     });
 
     return unsubscribe;
   }, []);
 
-  function logout() {
-    return signOut(auth);
-  }
-
   const value = {
     currentUser,
-    logout,
+    setCurrentUser,
+    login: (email, password) => auth.signInWithEmailAndPassword(email, password),
+    signup: (email, password) => auth.createUserWithEmailAndPassword(email, password),
+    logout: () => auth.signOut(),
   };
 
   return (

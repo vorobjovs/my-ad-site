@@ -45,10 +45,15 @@
   height: 30px;
   cursor: pointer;
   font-size: 20px;
+  color: #000;
+}
+
+.favourite-button.favourited {
+  color: red;
 }
 
 .favourite-button:hover {
-  background: rgb(223, 82, 82, 1.0);
+  background: rgba(255, 255, 255, 1);
 }
 
 .ad-content {

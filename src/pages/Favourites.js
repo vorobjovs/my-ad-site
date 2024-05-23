@@ -10,7 +10,7 @@ import { useAuth } from '../contexts/AuthContext';
 const Favourites = () => {
   const [favouriteAds, setFavouriteAds] = useState([]);
   const [users, setUsers] = useState({});
-  const { currentUser } = useAuth();
+  const { currentUser, setCurrentUser } = useAuth();
 
   useEffect(() => {
     const fetchFavouriteAds = async () => {
@@ -55,21 +55,24 @@ const Favourites = () => {
     try {
       const userRef = doc(db, 'users', currentUser.uid);
       const userDoc = await getDoc(userRef);
-
+  
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        const favouritedAds = userData.favouritedAds || [];
+        let favouritedAds = userData.favouritedAds || [];
         if (!favouritedAds.includes(adId)) {
-          await setDoc(userRef, { favouritedAds: [...favouritedAds, adId] }, { merge: true });
+          favouritedAds = [...favouritedAds, adId];
+          await setDoc(userRef, { favouritedAds }, { merge: true });
+          setCurrentUser({ ...currentUser, favouritedAds });
           alert('Ad added to favourites!');
         } else {
-          await setDoc(userRef, { favouritedAds: favouritedAds.filter(id => id !== adId) }, { merge: true });
+          favouritedAds = favouritedAds.filter(id => id !== adId);
+          await setDoc(userRef, { favouritedAds }, { merge: true });
+          setCurrentUser({ ...currentUser, favouritedAds });
           alert('Ad removed from favourites.');
-          setFavouriteAds(favouriteAds.filter(ad => ad.id !== adId));
         }
       }
     } catch (error) {
-      console.error('Error updating favourites:', error);
+      console.error('Error adding to favourites:', error);
     }
   };
 

@@ -10,7 +10,7 @@ import { useAuth } from '../contexts/AuthContext';
 const AdsPage = () => {
   const [ads, setAds] = useState([]);
   const [users, setUsers] = useState({});
-  const { currentUser } = useAuth();
+  const { currentUser, setCurrentUser } = useAuth();
 
   useEffect(() => {
     const fetchAds = async () => {
@@ -43,15 +43,19 @@ const AdsPage = () => {
     try {
       const userRef = doc(db, 'users', currentUser.uid);
       const userDoc = await getDoc(userRef);
-
+  
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        const favouritedAds = userData.favouritedAds || [];
+        let favouritedAds = userData.favouritedAds || [];
         if (!favouritedAds.includes(adId)) {
-          await setDoc(userRef, { favouritedAds: [...favouritedAds, adId] }, { merge: true });
+          favouritedAds = [...favouritedAds, adId];
+          await setDoc(userRef, { favouritedAds }, { merge: true });
+          setCurrentUser({ ...currentUser, favouritedAds });
           alert('Ad added to favourites!');
         } else {
-          await setDoc(userRef, { favouritedAds: favouritedAds.filter(id => id !== adId) }, { merge: true });
+          favouritedAds = favouritedAds.filter(id => id !== adId);
+          await setDoc(userRef, { favouritedAds }, { merge: true });
+          setCurrentUser({ ...currentUser, favouritedAds });
           alert('Ad removed from favourites.');
         }
       }
@@ -70,7 +74,9 @@ const AdsPage = () => {
               <Link to={`/ad/${ad.id}`}>
                 <img src={ad.photos[0]} alt="Ad image" className="ad-image" />
               </Link>
-              <button className="favourite-button" onClick={(e) => { e.stopPropagation(); handleFavourite(ad.id); }}>
+              <button
+                className={`favourite-button ${currentUser?.favouritedAds?.includes(ad.id) ? 'favourited' : ''}`}
+                onClick={() => handleFavourite(ad.id)}>
                 {currentUser?.favouritedAds?.includes(ad.id) ? 'C' : 'D'}
               </button>
             </div>
