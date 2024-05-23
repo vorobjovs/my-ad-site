@@ -1,4 +1,5 @@
-//test
+// src/pages/AdsPage.js
+
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import { collection, getDocs, doc, getDoc, setDoc } from 'firebase/firestore';
@@ -10,7 +11,7 @@ const AdsPage = () => {
   const [ads, setAds] = useState([]);
   const [users, setUsers] = useState({});
   const { currentUser } = useAuth();
-//test
+
   useEffect(() => {
     const fetchAds = async () => {
       const adsSnapshot = await getDocs(collection(db, 'ads'));
@@ -61,7 +62,7 @@ const AdsPage = () => {
 
   return (
     <div className="ads-page">
-      <h1>Ads</h1> 
+      <h1>Ads</h1>
       <div className="ads-grid">
         {ads.map(ad => (
           <div key={ad.id} className="ad-item">
@@ -70,7 +71,7 @@ const AdsPage = () => {
                 <img src={ad.photos[0]} alt="Ad image" className="ad-image" />
               </Link>
               <button className="favourite-button" onClick={(e) => { e.stopPropagation(); handleFavourite(ad.id); }}>
-                {users[currentUser?.uid]?.favouritedAds?.includes(ad.id) ? '♥' : '♡'}
+                {currentUser?.favouritedAds?.includes(ad.id) ? '♥' : '♡'}
               </button>
             </div>
             <div className="ad-content">
