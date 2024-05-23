@@ -1,42 +1,93 @@
-// src/pages/AdDetail.js
-
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
-import { doc, getDoc } from 'firebase/firestore';
-import './AdDetail.css';
+import { collection, getDocs, doc, getDoc, setDoc } from 'firebase/firestore';
+import { Link } from 'react-router-dom';
+import './AdsPage.css';
+import { useAuth } from '../contexts/AuthContext';
 
-const AdDetail = () => {
-  const { id } = useParams();
-  const [ad, setAd] = useState(null);
+const AdsPage = () => {
+  const [ads, setAds] = useState([]);
+  const [users, setUsers] = useState({});
+  const { currentUser } = useAuth();
 
   useEffect(() => {
-    const fetchAd = async () => {
-      const docRef = doc(db, 'ads', id);
-      const docSnap = await getDoc(docRef);
+    const fetchAds = async () => {
+      const adsSnapshot = await getDocs(collection(db, 'ads'));
+      const adsList = adsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-      if (docSnap.exists()) {
-        setAd(docSnap.data());
-      } else {
-        console.log('No such document!');
-      }
+      const userPromises = adsList.map(async (ad) => {
+        const userDoc = await getDoc(doc(db, 'users', ad.userId));
+        return { userId: ad.userId, userData: userDoc.data() };
+      });
+
+      const usersData = await Promise.all(userPromises);
+      const usersMap = usersData.reduce((acc, user) => {
+        acc[user.userId] = user.userData;
+        return acc;
+      }, {});
+
+      setUsers(usersMap);
+      setAds(adsList);
     };
 
-    fetchAd();
-  }, [id]);
+    fetchAds();
+  }, []);
 
-  if (!ad) return <p>Loading...</p>;
+  const handleFavourite = async (adId) => {
+    if (!currentUser) {
+      alert('Please log in to favourite ads.');
+      return;
+    }
+    try {
+      const userRef = doc(db, 'users', currentUser.uid);
+      const userDoc = await getDoc(userRef);
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        const favouritedAds = userData.favouritedAds || [];
+        if (!favouritedAds.includes(adId)) {
+          await setDoc(userRef, { favouritedAds: [...favouritedAds, adId] }, { merge: true });
+          alert('Ad added to favourites!');
+        } else {
+          await setDoc(userRef, { favouritedAds: favouritedAds.filter(id => id !== adId) }, { merge: true });
+          alert('Ad removed from favourites.');
+        }
+      }
+    } catch (error) {
+      console.error('Error adding to favourites:', error);
+    }
+  };
 
   return (
-    <div className="ad-detail-container">
-      <h1>{ad.title}</h1>
-      <img src={ad.photos[0]} alt={ad.title} className="ad-detail-image" />
-      <p>{ad.description}</p>
-      <p>Price: {ad.price}</p>
-      <p>Category: {ad.category}</p>
-      <p>Posted by: {ad.userId}</p>
+    <div className="ads-page">
+      <h1>Ads</h1>
+      <div className="ads-grid">
+        {ads.map(ad => (
+          <div key={ad.id} className="ad-item">
+            <div className="ad-header">
+              <Link to={`/ad/${ad.id}`}>
+                <img src={ad.photos[0]} alt="Ad image" className="ad-image" />
+              </Link>
+              <button className="favourite-button" onClick={(e) => { e.stopPropagation(); handleFavourite(ad.id); }}>
+                {users[currentUser?.uid]?.favouritedAds?.includes(ad.id) ? '♥' : '♡'}
+              </button>
+            </div>
+            <div className="ad-content">
+              <h2>{ad.title}</h2>
+              <div className="ad-user-info">
+                <Link to={`/profile/${ad.userId}`}>
+                  <img src={users[ad.userId]?.profilePictureUrl || 'default-profile.png'} alt="User Profile" className="ad-user-image" />
+                </Link>
+                <Link to={`/profile/${ad.userId}`} className="ad-user-name">{users[ad.userId]?.name || 'Unknown User'}</Link>
+              </div>
+              <p className="ad-price">{`$${ad.price}`}</p>
+              <Link to={`/ad/${ad.id}`} className="view-button">Offer</Link>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
 
-export default AdDetail;
+export default AdsPage;
