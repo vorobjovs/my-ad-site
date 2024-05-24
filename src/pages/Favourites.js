@@ -6,6 +6,7 @@ import { collection, getDocs, doc, getDoc, setDoc } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
 import './Favourites.css';
 import { useAuth } from '../contexts/AuthContext';
+import { HeartFilled, HeartOutlined } from '@ant-design/icons';
 
 const Favourites = () => {
   const [favouriteAds, setFavouriteAds] = useState([]);
@@ -89,7 +90,7 @@ const Favourites = () => {
               <button
                 className={`favourite-button ${currentUser?.favouritedAds?.includes(ad.id) ? 'favourited' : ''}`}
                 onClick={() => handleFavourite(ad.id)}>
-                {currentUser?.favouritedAds?.includes(ad.id) ? 'A' : 'B'}
+                {currentUser?.favouritedAds?.includes(ad.id) ? <HeartFilled /> : <HeartOutlined />}
               </button>
             </div>
             <div className="ad-content">

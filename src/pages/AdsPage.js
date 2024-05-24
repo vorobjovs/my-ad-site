@@ -6,6 +6,7 @@ import { collection, getDocs, doc, getDoc, setDoc } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
 import './AdsPage.css';
 import { useAuth } from '../contexts/AuthContext';
+import { HeartFilled, HeartOutlined } from '@ant-design/icons';
 
 const AdsPage = () => {
   const [ads, setAds] = useState([]);
@@ -76,8 +77,8 @@ const AdsPage = () => {
               </Link>
               <button
                 className={`favourite-button ${currentUser?.favouritedAds?.includes(ad.id) ? 'favourited' : ''}`}
-                onClick={() => handleFavourite(ad.id)}>
-                {currentUser?.favouritedAds?.includes(ad.id) ? 'C' : 'D'}
+                onClick={(e) => { e.stopPropagation(); handleFavourite(ad.id); }}>
+                {currentUser?.favouritedAds?.includes(ad.id) ? <HeartFilled /> : <HeartOutlined />}
               </button>
             </div>
             <div className="ad-content">
