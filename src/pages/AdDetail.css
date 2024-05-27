@@ -12,6 +12,7 @@
 
 .ad-detail-container h3 {
   color: #888;
+  margin-bottom: 20px;
 }
 
 .ad-image-container {
@@ -25,7 +26,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background-color: rgba(255, 255, 255, 0.3); /* 30% opacity */
+  background-color: transparent; /* Make background transparent */
   border: none;
   cursor: pointer;
   width: 50px;
@@ -33,27 +34,23 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 40px;
-  border-radius: 20%;
+  color: #f9f9f9;
+  font-size: 60px;
+  opacity: 0.2; /* Set initial opacity */
+}
+
+.ad-image-button:hover {
+  opacity: 0.8; /* Increase opacity on hover */
 }
 
 .ad-image-button-prev {
   left: 10px;
-  opacity: 0.3;
 }
 
 .ad-image-button-next {
   right: 10px;
-  opacity: 0.3;
 }
 
-.ad-image-button-prev:hover {
-  background-color: rgba(255, 255, 255, 0.8); /* 80% opacity */
-}
-
-.ad-image-button-next:hover {
-  background-color: rgba(255, 255, 255, 0.8); /* 80% opacity */
-}
 .ad-detail-image {
   width: 100%;
   height: auto;
@@ -68,9 +65,10 @@
   margin: 20px 0;
 }
 
-.ad-author, .ad-price {
+.ad-author, .ad-price, .offer-button {
   display: flex;
   align-items: center;
+  margin-right: 20px;
 }
 
 .ad-author img {
@@ -84,7 +82,6 @@
   font-size: 1.5em;
   font-weight: bold;
 }
-
 
 .offer-button {
   background-color: #007bff;
