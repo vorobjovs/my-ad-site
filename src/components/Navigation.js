@@ -17,7 +17,7 @@ import {
   UserAddOutlined,
   KeyOutlined
 } from '@ant-design/icons';
-import ForgotPassword from '../pages/ForgotPassword';
+
 
 
 const Navigation = () => {
@@ -34,41 +34,30 @@ const Navigation = () => {
       console.error('Failed to log out', error);
     }
   };
-//do not remove menu items
+
+  const menuItems = [
+    { key: 'home', icon: <HomeOutlined />, label: 'Home', onClick: () => navigate('/') },
+    { key: 'edit-profile', icon: <HomeOutlined />, label: 'Edit Profile', onClick: () => navigate('/edit-profile') },
+    { key: 'profile', icon: <UserOutlined />, label: 'User Profile', onClick: () => navigate('/userprofile') },
+    { key: 'post-ad', icon: <PlusOutlined />, label: 'Post Ad', onClick: () => navigate('/post-ad') },
+    { key: 'ads', icon: <AppstoreOutlined />, label: 'Ads Page', onClick: () => navigate('/ads') },
+    { key: 'favourites', icon: <HeartOutlined />, label: 'Favourites', onClick: () => navigate('/favourites') },
+    ...currentUser ? [
+      { key: 'logout', icon: <LogoutOutlined />, label: 'Log Out', onClick: handleLogout }
+     ] : [
+      
+      { key: 'signup', icon: <UserAddOutlined />, label: 'Sign Up', onClick: () => navigate('/signup') },
+      { key: 'login', icon: <LoginOutlined />, label: 'Log In', onClick: () => navigate('/login') },
+      { key: 'forgot-password', icon: <KeyOutlined />, label: 'Forgot Password', onClick: () => navigate('/forgot-password') }
+     ]
+  ];
+
   return (
     <nav className="navigation">
       <div className="navigation-header">
         <h2>My Ad Site</h2>
       </div>
-      <Menu mode="inline" theme="dark" className="navigation">
-      <Menu.Item key="home" icon={<HomeOutlined />} onClick={() => navigate('/')}>
-        Home
-      </Menu.Item>
-      <Menu.Item key="edit-profile" icon={<HomeOutlined />} onClick={() => navigate('/edit-profile')}>
-        Edit Profile
-      </Menu.Item>
-        <Menu.Item key="profile" icon={<UserOutlined />} onClick={() => navigate('/userprofile')}>
-        User Profile </Menu.Item>
-      <Menu.Item key="post-ad" icon={<PlusOutlined />} onClick={() => navigate('/post-ad')}>
-        Post Ad </Menu.Item>
-      <Menu.Item key="ads" icon={<AppstoreOutlined />} onClick={() => navigate('/ads')}>
-        Ads Page </Menu.Item>
-      <Menu.Item key="favourites" icon={<HeartOutlined />} onClick={() => navigate('/favourites')}>
-        Favourites </Menu.Item>
-      {currentUser ? (
-        <Menu.Item key="logout" icon={<LogoutOutlined />} onClick={handleLogout}>
-          Log Out </Menu.Item>
-      ) : (
-        <>
-          <Menu.Item key="signup" icon={<UserAddOutlined />} onClick={() => navigate('/signup')}>
-            Sign Up </Menu.Item>
-          <Menu.Item key="login" icon={<LoginOutlined />} onClick={() => navigate('/login')}>
-            Log In </Menu.Item>
-        <Menu.Item key="/forgot-password" icon={<KeyOutlined />} onClick={() => navigate('/forgot-password')}>
-          Forgot Password</Menu.Item>
-        </>
-      )}
-      </Menu>
+      <Menu mode="inline" theme="dark" className="navigation" items={menuItems} />
     </nav>
   );
 };
