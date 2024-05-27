@@ -38,22 +38,24 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  background: rgba(255, 255, 255, 0.8);
+  background-color: transparent; /* Make background transparent */
   border: none;
   border-radius: 50%;
   width: 30px;
   height: 30px;
   cursor: pointer;
   font-size: 20px;
-  color: #000;
+  color: #7a7a7a;
+  justify-content: center;
+  align-items: center;
 }
 
 .favourite-button.favourited {
-  color: red;
+  color: rgb(214, 21, 54);
 }
 
 .favourite-button:hover {
-  background: rgba(255, 255, 255, 1);
+  color: rgb(231, 68, 68);
 }
 
 .ad-content {

@@ -78,7 +78,7 @@ const AdsPage = () => {
               <button
                 className={`favourite-button ${currentUser?.favouritedAds?.includes(ad.id) ? 'favourited' : ''}`}
                 onClick={(e) => { e.stopPropagation(); handleFavourite(ad.id); }}>
-                {currentUser?.favouritedAds?.includes(ad.id) ? <HeartFilled /> : <HeartOutlined />}
+                {currentUser?.favouritedAds?.includes(ad.id) ? <HeartFilled /> : <HeartFilled />}
               </button>
             </div>
             <div className="ad-content">

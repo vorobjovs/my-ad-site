@@ -34,9 +34,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #f9f9f9;
-  font-size: 60px;
-  opacity: 0.2; /* Set initial opacity */
+  color: #777777;
+  font-size: 80px;
+  opacity: 0.4; /* Set initial opacity */
 }
 
 .ad-image-button:hover {

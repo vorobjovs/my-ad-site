@@ -90,7 +90,7 @@ const Favourites = () => {
               <button
                 className={`favourite-button ${currentUser?.favouritedAds?.includes(ad.id) ? 'favourited' : ''}`}
                 onClick={() => handleFavourite(ad.id)}>
-                {currentUser?.favouritedAds?.includes(ad.id) ? <HeartFilled /> : <HeartOutlined />}
+                {currentUser?.favouritedAds?.includes(ad.id) ? <HeartFilled /> : <HeartFilled />}
               </button>
             </div>
             <div className="ad-content">
