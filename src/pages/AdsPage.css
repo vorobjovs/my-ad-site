@@ -1,96 +1,90 @@
-.ad-detail-container {
+/* src/pages/AdsPage.css */
+
+.ads-page {
   padding: 20px;
 }
 
-.ad-title {
-  background-color: #bde4ea;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 5px;
-  display: inline-block;
-  text-align: left;
+.ads-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
 }
 
-.ad-category {
-  background-color: #bde4ea;
-  padding: 10px;
-  border-radius: 5px;
-  display: inline-block;
-  text-align: left;
+.ad-item {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s;
+  position: relative;
+}
+
+.ad-item:hover {
+  transform: scale(1.05);
+}
+
+.ad-header {
+  position: relative;
+}
+
+.ad-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.ad-image.blur {
+  filter: blur(8px);
+}
+
+
+
+.ad-content {
+  padding: 15px;
+}
+
+.ad-content h2 {
+  font-size: 1.25em;
   margin-bottom: 10px;
 }
 
-.ad-image-container {
-  position: relative;
-  width: 100%;
-  height: auto;
+.ad-user-info {
   display: flex;
-  justify-content: center;
   align-items: center;
+  margin-bottom: 10px;
 }
 
-.ad-detail-image {
-  width: 100%;
-  max-height: auto;
-  object-fit: cover;
-  border-radius: 10px;
-}
-
-.image-nav-button {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.5);
-  border: none;
-  padding: 10px;
+.ad-user-image {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 10px;
   cursor: pointer;
-  border-radius: 50%;
 }
 
-.image-nav-button:hover {
-  background: rgba(255, 255, 255, 1);
-}
-
-.image-nav-button.prev {
-  left: 10px;
-}
-
-.image-nav-button.next {
-  right: 10px;
-}
-
-.ad-info {
-  display: flex;
-  align-items: center;
-  margin: 10px 0;
-}
-
-.ad-author-image {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin-right: 10px;
-}
-
-.ad-author, .ad-price, .offer-button {
-  background-color: #bde4ea;
-  padding: 10px;
-  border-radius: 5px;
-  margin-right: 10px;
+.ad-user-name {
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
 }
 
 .ad-price {
-  margin-left: auto;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
-.offer-button {
-  cursor: pointer;
-  border: none;
-}
-
-.ad-description {
-  background-color: #a7e5ef;
-  padding: 20px;
+.view-button {
+  display: block;
+  text-align: center;
+  background: #007bff;
+  color: white;
+  padding: 10px;
   border-radius: 5px;
-  margin-top: 10px;
+  text-decoration: none;
+}
+
+.view-button:hover {
+  background: #0056b3;
 }

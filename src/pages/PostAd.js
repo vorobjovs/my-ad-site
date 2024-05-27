@@ -3,10 +3,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, storage } from '../firebase';
-import { collection, addDoc, doc, getDoc} from 'firebase/firestore';
+import { collection, addDoc, doc, getDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../contexts/AuthContext';
 import './PostAd.css';
+import { CaretRightFilled, CaretLeftFilled } from '@ant-design/icons';
 
 const PostAd = () => {
   const { currentUser } = useAuth();
@@ -22,12 +23,22 @@ const PostAd = () => {
   const [blurThumbnail, setBlurThumbnail] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [previewIndex, setPreviewIndex] = useState(0);
 
   const handlePhotoChange = (e) => {
     const files = Array.from(e.target.files);
     setPhotos(files);
     const urls = files.map((file) => URL.createObjectURL(file));
     setPhotoURLs(urls);
+  };
+
+  const handleRemovePhoto = (index) => {
+    setPhotos((prevPhotos) => prevPhotos.filter((_, i) => i !== index));
+    setPhotoURLs((prevURLs) => prevURLs.filter((_, i) => i !== index));
+  };
+
+  const handlePreviewChange = (index) => {
+    setPreviewIndex(index);
   };
 
   const handleSubmit = async (e) => {
@@ -60,6 +71,7 @@ const PostAd = () => {
         price,
         category,
         photos: uploadedPhotos,
+        previewImage: uploadedPhotos[previewIndex],
         userId: currentUser.uid,
         userName: userData.name,
         userProfilePicture: userData.profilePictureUrl,
@@ -97,7 +109,15 @@ const PostAd = () => {
         <input type="file" multiple onChange={handlePhotoChange} />
         <div className="photo-preview">
           {photoURLs.map((url, index) => (
-            <img key={index} src={url} alt={`Preview ${index}`} />
+            <div key={index} className="photo-preview-item">
+              <img
+                src={url}
+                alt={`Preview ${index}`}
+                className={index === previewIndex ? 'selected' : ''}
+                onClick={() => handlePreviewChange(index)}
+              />
+              <button type="button" onClick={() => handleRemovePhoto(index)}>Remove</button>
+            </div>
           ))}
         </div>
         <label>

@@ -44,19 +44,15 @@ const AdsPage = () => {
     try {
       const userRef = doc(db, 'users', currentUser.uid);
       const userDoc = await getDoc(userRef);
-  
+
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        let favouritedAds = userData.favouritedAds || [];
+        const favouritedAds = userData.favouritedAds || [];
         if (!favouritedAds.includes(adId)) {
-          favouritedAds = [...favouritedAds, adId];
-          await setDoc(userRef, { favouritedAds }, { merge: true });
-          setCurrentUser({ ...currentUser, favouritedAds });
+          await setDoc(userRef, { favouritedAds: [...favouritedAds, adId] }, { merge: true });
           alert('Ad added to favourites!');
         } else {
-          favouritedAds = favouritedAds.filter(id => id !== adId);
-          await setDoc(userRef, { favouritedAds }, { merge: true });
-          setCurrentUser({ ...currentUser, favouritedAds });
+          await setDoc(userRef, { favouritedAds: favouritedAds.filter(id => id !== adId) }, { merge: true });
           alert('Ad removed from favourites.');
         }
       }
@@ -73,7 +69,11 @@ const AdsPage = () => {
           <div key={ad.id} className="ad-item">
             <div className="ad-header">
               <Link to={`/ad/${ad.id}`}>
-                <img src={ad.photos[0]} alt="Ad image" className="ad-image" />
+                <img 
+                  src={ad.previewImage} 
+                  alt="Ad image" 
+                  className={`ad-image ${ad.blurThumbnail ? 'blur' : ''}`} 
+                />
               </Link>
               <button
                 className={`favourite-button ${currentUser?.favouritedAds?.includes(ad.id) ? 'favourited' : ''}`}
