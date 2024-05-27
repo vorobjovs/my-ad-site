@@ -16,7 +16,7 @@ const Login = () => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate('/userprofile');
+      navigate('/ads');
     } catch (error) {
       setError(error.message);
     }
