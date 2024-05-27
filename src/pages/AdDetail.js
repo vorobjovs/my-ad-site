@@ -9,8 +9,8 @@ import './AdDetail.css';
 const AdDetail = () => {
   const { id } = useParams();
   const [ad, setAd] = useState(null);
-  const [user, setUser] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const fetchAd = async () => {
@@ -20,43 +20,54 @@ const AdDetail = () => {
       if (docSnap.exists()) {
         const adData = docSnap.data();
         setAd(adData);
-        
+
+        // Fetch user data
         const userRef = doc(db, 'users', adData.userId);
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) {
           setUser(userSnap.data());
+        } else {
+          console.log('No such user document!');
         }
       } else {
-        console.log('No such document!');
+        console.log('No such ad document!');
       }
     };
 
     fetchAd();
   }, [id]);
 
-  const nextImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % ad.photos.length);
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === 0 ? ad.photos.length - 1 : prevIndex - 1
+    );
   };
 
-  const prevImage = () => {
-    setCurrentImageIndex((prevIndex) => (prevIndex - 1 + ad.photos.length) % ad.photos.length);
+  const handleNextImage = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === ad.photos.length - 1 ? 0 : prevIndex + 1
+    );
   };
 
-  if (!ad) return <p>Loading...</p>;
+  if (!ad || !user) return <p>Loading...</p>;
 
   return (
     <div className="ad-detail-container">
-      <h1 className="ad-title">{ad.title}</h1>
-      <p className="ad-category">{ad.category}</p>
+      <h1>{ad.title}</h1>
+      <h3>{ad.category}</h3>
       <div className="ad-image-container">
-        <button className="image-nav-button prev" onClick={prevImage}>❮</button>
+        <button className="ad-image-button ad-image-button-prev" onClick={handlePrevImage}>&lt;</button>
         <img src={ad.photos[currentImageIndex]} alt={ad.title} className="ad-detail-image" />
-        <button className="image-nav-button next" onClick={nextImage}>❯</button>
+        <button className="ad-image-button ad-image-button-next" onClick={handleNextImage}>&gt;</button>
       </div>
       <div className="ad-info">
-        <img src={user?.profilePictureUrl || 'default-profile.png'} alt="Ad Author" className="ad-author-image" />
-        <span className="ad-author">{user?.name || 'Unknown User'}</span>
-        <span className="ad-price">${ad.price}</span>
+        <div className="ad-author">
+          <img src={user.profilePictureUrl || 'default-profile.png'} alt="User Profile" className="ad-user-image" />
+          <p>{user.name || 'Unknown User'}</p>
+        </div>
+        <div className="ad-price">
+          <p>Price: ${ad.price}</p>
+        </div>
         <button className="offer-button">Offer</button>
       </div>
       <p className="ad-description">{ad.description}</p>
