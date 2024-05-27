@@ -5,6 +5,8 @@ import { useParams } from 'react-router-dom';
 import { db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import './AdDetail.css';
+import { CaretRightFilled, CaretLeftFilled } from '@ant-design/icons';
+
 
 const AdDetail = () => {
   const { id } = useParams();
@@ -56,9 +58,9 @@ const AdDetail = () => {
       <h1>{ad.title}</h1>
       <h3>{ad.category}</h3>
       <div className="ad-image-container">
-        <button className="ad-image-button ad-image-button-prev" onClick={handlePrevImage}>&lt;</button>
+        <button className="ad-image-button ad-image-button-prev" onClick={handlePrevImage}><CaretLeftFilled /></button>
         <img src={ad.photos[currentImageIndex]} alt={ad.title} className="ad-detail-image" />
-        <button className="ad-image-button ad-image-button-next" onClick={handleNextImage}>&gt;</button>
+        <button className="ad-image-button ad-image-button-next" onClick={handleNextImage}><CaretRightFilled /></button>
       </div>
       <div className="ad-info">
         <div className="ad-author">
