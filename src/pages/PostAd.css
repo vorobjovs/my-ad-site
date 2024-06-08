@@ -40,39 +40,100 @@
 
 .photo-preview {
   display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  overflow-x: auto;
+  position: relative;
+}
+
+.photo-thumbnail {
+  position: relative;
+  width: 150px; /* Adjusted for better visibility */
+  height: 150px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.photo-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-thumbnail.empty {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+
+.photo-thumbnail.empty span {
+  color: #888;
+}
+
+.remove-photo {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: rgba(255, 0, 0, 0.7);
+  border: none;
+  color: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.carousel-button {
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.carousel-button.prev {
+  margin-right: 10px;
+}
+
+.carousel-button.next {
+  margin-left: 10px;
+}
+
+.blur {
+  filter: blur(5px);
+}
+
+
+.category-buttons {
+  display: flex;
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 10px;
 }
 
-.photo-preview-item {
-  position: relative;
-}
-
-.photo-preview img {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 5px;
-  border: 1px solid #ddd;
-  cursor: pointer;
-}
-
-.photo-preview img.selected {
-  border: 2px solid #007bff;
-}
-
-.photo-preview-item button {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background: rgba(255, 0, 0, 0.7);
+.category-button {
+  background: #ddd;
   border: none;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  color: white;
+  border-radius: 5px;
+  padding: 10px 20px;
   cursor: pointer;
+}
+
+.category-button.selected {
+  background: #007bff;
+  color: #fff;
 }
 
 .post-ad-container form button {

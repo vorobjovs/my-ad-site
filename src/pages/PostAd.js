@@ -1,5 +1,3 @@
-// src/pages/PostAd.js
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, storage } from '../firebase';
@@ -7,7 +5,11 @@ import { collection, addDoc, doc, getDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../contexts/AuthContext';
 import './PostAd.css';
-import { CaretRightFilled, CaretLeftFilled } from '@ant-design/icons';
+import { CaretLeftFilled, CaretRightFilled } from '@ant-design/icons';
+
+const categoriesList = ['Fashion', 'Cars', 'Woodworking', 'Gaming', 'Pets'];
+const tagsList = ['Creator', 'Advertiser', 'Product', 'Service'];
+const requirementsList = ['No requirements', 'Min follower count', 'Max follower count', 'Location', 'Verified Twitter', 'Verified YouTube', 'Verified Instagram', 'Verified Pinterest'];
 
 const PostAd = () => {
   const { currentUser } = useAuth();
@@ -15,15 +17,16 @@ const PostAd = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState([]);
+  const [customCategory, setCustomCategory] = useState('');
   const [photos, setPhotos] = useState([]);
   const [photoURLs, setPhotoURLs] = useState([]);
+  const [thumbnailIndex, setThumbnailIndex] = useState(0);
   const [verifiedUsersOnly, setVerifiedUsersOnly] = useState(false);
-  const [requirements, setRequirements] = useState('');
+  const [requirements, setRequirements] = useState([]);
   const [blurThumbnail, setBlurThumbnail] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
-  const [previewIndex, setPreviewIndex] = useState(0);
 
   const handlePhotoChange = (e) => {
     const files = Array.from(e.target.files);
@@ -32,13 +35,34 @@ const PostAd = () => {
     setPhotoURLs(urls);
   };
 
-  const handleRemovePhoto = (index) => {
-    setPhotos((prevPhotos) => prevPhotos.filter((_, i) => i !== index));
-    setPhotoURLs((prevURLs) => prevURLs.filter((_, i) => i !== index));
+  const handleCategoryChange = (category) => {
+    setCategory((prevCategories) => {
+      if (prevCategories.includes(category)) {
+        return prevCategories.filter((cat) => cat !== category);
+      } else {
+        return [...prevCategories, category];
+      }
+    });
   };
 
-  const handlePreviewChange = (index) => {
-    setPreviewIndex(index);
+  const handleRequirementsChange = (requirement) => {
+    setRequirements((prevRequirements) => {
+      if (prevRequirements.includes(requirement)) {
+        return prevRequirements.filter((req) => req !== requirement);
+      } else {
+        return [...prevRequirements, requirement];
+      }
+    });
+  };
+
+  const handleRemovePhoto = (index) => {
+    setPhotos(photos.filter((_, i) => i !== index));
+    setPhotoURLs(photoURLs.filter((_, i) => i !== index));
+    if (index === thumbnailIndex && photos.length > 1) {
+      setThumbnailIndex(0);
+    } else if (index < thumbnailIndex) {
+      setThumbnailIndex(thumbnailIndex - 1);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -69,9 +93,9 @@ const PostAd = () => {
         title,
         description,
         price,
-        category,
+        category: [...category, customCategory],
         photos: uploadedPhotos,
-        previewImage: uploadedPhotos[previewIndex],
+        thumbnail: uploadedPhotos[thumbnailIndex],
         userId: currentUser.uid,
         userName: userData.name,
         userProfilePicture: userData.profilePictureUrl,
@@ -99,45 +123,80 @@ const PostAd = () => {
       <form onSubmit={handleSubmit}>
         <label>Title</label>
         <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required />
-        <label>Description</label>
-        <textarea value={description} onChange={(e) => setDescription(e.target.value)} required></textarea>
-        <label>Price</label>
-        <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} required />
         <label>Category</label>
-        <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} required />
-        <label>Attach Photos or Media</label>
-        <input type="file" multiple onChange={handlePhotoChange} />
-        <div className="photo-preview">
-          {photoURLs.map((url, index) => (
-            <div key={index} className="photo-preview-item">
-              <img
-                src={url}
-                alt={`Preview ${index}`}
-                className={index === previewIndex ? 'selected' : ''}
-                onClick={() => handlePreviewChange(index)}
-              />
-              <button type="button" onClick={() => handleRemovePhoto(index)}>Remove</button>
-            </div>
+        <div className="category-buttons">
+          {categoriesList.map((cat) => (
+            <button
+              key={cat}
+              type="button"
+              className={`category-button ${category.includes(cat) ? 'selected' : ''}`}
+              onClick={() => handleCategoryChange(cat)}
+            >
+              {cat}
+            </button>
           ))}
         </div>
+        <input type="text" placeholder="Custom category" value={customCategory} onChange={(e) => setCustomCategory(e.target.value)} />
+        <label>Attach Photos or Media</label>
+        <div className="photo-preview">
+  <button type="button" className="carousel-button prev" onClick={() => setThumbnailIndex((prev) => (prev === 0 ? photos.length - 1 : prev - 1))}><CaretLeftFilled /></button>
+  {photoURLs.map((url, index) => (
+    <div key={index} className="photo-thumbnail">
+      <img src={url} alt={`Preview ${index}`} className={blurThumbnail && thumbnailIndex === index ? 'blur' : ''} />
+      <button type="button" className="remove-photo" onClick={() => handleRemovePhoto(index)}>x</button>
+      <label>
+        <input
+          type="radio"
+          name="thumbnail"
+          checked={thumbnailIndex === index}
+          onChange={() => setThumbnailIndex(index)}
+        />
+        Thumbnail
+      </label>
+    </div>
+  ))}
+  {photoURLs.length < 3 && (
+    <div className="photo-thumbnail empty">
+      <input type="file" multiple onChange={handlePhotoChange} />
+      <span>Upload Photo</span>
+    </div>
+  )}
+  <button type="button" className="carousel-button next" onClick={() => setThumbnailIndex((prev) => (prev === photos.length - 1 ? 0 : prev + 1))}><CaretRightFilled /></button>
+  </div>
         <label>
-          <input
-            type="checkbox"
-            checked={verifiedUsersOnly}
-            onChange={(e) => setVerifiedUsersOnly(e.target.checked)}
-          />
-          Show to verified users only
-        </label>
-        <label>Requirements</label>
-        <textarea value={requirements} onChange={(e) => setRequirements(e.target.value)}></textarea>
-        <label>
-          <input
-            type="checkbox"
-            checked={blurThumbnail}
-            onChange={(e) => setBlurThumbnail(e.target.checked)}
-          />
+          <input type="checkbox" checked={blurThumbnail} onChange={(e) => setBlurThumbnail(e.target.checked)} />
           Blur thumbnail
         </label>
+        <label>Price</label>
+        <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} required />
+        <label>Tags</label>
+        <div className="category-buttons">
+          {tagsList.map((tag) => (
+            <button
+              key={tag}
+              type="button"
+              className={`category-button ${category.includes(tag) ? 'selected' : ''}`}
+              onClick={() => handleCategoryChange(tag)}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+        <label>Description</label>
+        <textarea value={description} onChange={(e) => setDescription(e.target.value)} required></textarea>
+        <label>Verification Requirements</label>
+        <div className="category-buttons">
+          {requirementsList.map((req) => (
+            <button
+              key={req}
+              type="button"
+              className={`category-button ${requirements.includes(req) ? 'selected' : ''}`}
+              onClick={() => handleRequirementsChange(req)}
+            >
+              {req}
+            </button>
+          ))}
+        </div>
         <button type="submit" disabled={uploading}>Post Ad</button>
         {uploading && <p>Uploading...</p>}
         {successMessage && <p className="success-message">{successMessage}</p>}
