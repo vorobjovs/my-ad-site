@@ -6,6 +6,7 @@ import { db, storage } from '../firebase';
 import { collection, addDoc, doc, getDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../contexts/AuthContext';
+import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons';
 import './PostAd.css';
 
 const PostAd = () => {
@@ -122,11 +123,20 @@ const PostAd = () => {
     );
   };
 
+  const handleCustomCategoryKeyPress = (e) => {
+    if (e.key === 'Enter' && customCategory) {
+      handleCategoryClick(customCategory);
+      setCategory(customCategory);
+      setCustomCategory('');
+    }
+  };
+
   return (
     <div className="post-ad-container">
       <h1>Post an Ad</h1>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
+          <label htmlFor="title" className="form-label">Title</label>
           <input
             type="text"
             id="title"
@@ -141,23 +151,41 @@ const PostAd = () => {
         
         <div className="form-group">
           <label>Category</label>
-          <div className="category-buttons">
-            {['Fashion', 'Cars', 'Woodworking', 'Gaming', 'Pets'].map((cat) => (
-              <button
-                type="button"
-                key={cat}
-                className={`category-button ${category === cat ? 'selected' : ''}`}
-                onClick={() => handleCategoryClick(cat)}
-              >
-                {cat}
-              </button>
-            ))}
+          <div className="category-carousel">
+            <button type="button" className="carousel-nav" onClick={() => document.getElementById('category-buttons').scrollLeft -= 100}>
+              <CaretLeftOutlined />
+            </button>
+            <div id="category-buttons" className="category-buttons">
+              {['Fashion', 'Cars', 'Woodworking', 'Gaming', 'Pets'].map((cat) => (
+                <button
+                  type="button"
+                  key={cat}
+                  className={`category-button ${category === cat ? 'selected' : ''}`}
+                  onClick={() => handleCategoryClick(cat)}
+                >
+                  {cat}
+                </button>
+              ))}
+              {customCategory && (
+                <button
+                  type="button"
+                  className={`category-button ${category === customCategory ? 'selected' : ''}`}
+                  onClick={() => handleCategoryClick(customCategory)}
+                >
+                  {customCategory}
+                </button>
+              )}
+            </div>
+            <button type="button" className="carousel-nav" onClick={() => document.getElementById('category-buttons').scrollLeft += 100}>
+              <CaretRightOutlined />
+            </button>
           </div>
           <input
             type="text"
-            placeholder="Custom category"
             value={customCategory}
             onChange={(e) => setCustomCategory(e.target.value)}
+            onKeyPress={handleCustomCategoryKeyPress}
+            placeholder="Custom category"
             className="custom-category-input"
           />
         </div>
@@ -250,7 +278,9 @@ const PostAd = () => {
             <button
               type="button"
               key={req}
-              className={`requirement-button ${requirements.includes(req) ? 'selected' : ''}`}
+              className={`requirement-button ${
+                requirements.includes(req) ? 'selected' : ''
+              }`}
               onClick={() => handleRequirementClick(req)}
             >
               {req}
