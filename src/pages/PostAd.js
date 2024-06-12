@@ -1,13 +1,11 @@
-// src/pages/PostAd.js
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, storage } from '../firebase';
 import { collection, addDoc, doc, getDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../contexts/AuthContext';
-import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons';
 import './PostAd.css';
+import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons';
 
 const PostAd = () => {
   const { currentUser } = useAuth();
@@ -15,7 +13,7 @@ const PostAd = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
-  const [category, setCategory] = useState('');
+  const [categories, setCategories] = useState([]);
   const [customCategory, setCustomCategory] = useState('');
   const [photos, setPhotos] = useState([]);
   const [photoURLs, setPhotoURLs] = useState([]);
@@ -56,7 +54,7 @@ const PostAd = () => {
         title,
         description,
         price,
-        category: customCategory ? customCategory : category,
+        categories: customCategory ? [...categories, customCategory] : categories,
         photos: uploadedPhotos,
         userId: currentUser.uid,
         userName: userData.name,
@@ -82,7 +80,9 @@ const PostAd = () => {
   };
 
   const handleCategoryClick = (category) => {
-    setCategory(category);
+    setCategories((prev) =>
+      prev.includes(category) ? prev.filter((cat) => cat !== category) : [...prev, category]
+    );
   };
 
   const handleRequirementClick = (requirement) => {
@@ -123,10 +123,9 @@ const PostAd = () => {
     );
   };
 
-  const handleCustomCategoryKeyPress = (e) => {
+  const handleCustomCategoryAdd = (e) => {
     if (e.key === 'Enter' && customCategory) {
       handleCategoryClick(customCategory);
-      setCategory(customCategory);
       setCustomCategory('');
     }
   };
@@ -135,61 +134,57 @@ const PostAd = () => {
     <div className="post-ad-container">
       <h1>Post an Ad</h1>
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="title" className="form-label">Title</label>
-          <input
-            type="text"
-            id="title"
-            maxLength="120"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Ad title"
-            className="form-input"
-            required
-          />
-        </div>
-        
-        <div className="form-group">
-          <label>Category</label>
-          <div className="category-carousel">
-            <button type="button" className="carousel-nav" onClick={() => document.getElementById('category-buttons').scrollLeft -= 100}>
-              <CaretLeftOutlined />
-            </button>
-            <div id="category-buttons" className="category-buttons">
-              {['Fashion', 'Cars', 'Woodworking', 'Gaming', 'Pets'].map((cat) => (
+        <label>Title</label>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          maxLength={120}
+          className="form-input"
+          placeholder="Ad title"
+          required
+        />
+        <label>Category</label>
+        <div className="category-carousel">
+          <button type="button" className="carousel-nav" onClick={handlePrevImage}>
+            <CaretLeftOutlined />
+          </button>
+          <div className="category-buttons">
+            {['Fashion', 'Cars', 'Woodworking', 'Gaming', 'Pets'].map((cat) => (
+              <button
+                type="button"
+                key={cat}
+                className={`category-button ${categories.includes(cat) ? 'selected' : ''}`}
+                onClick={() => handleCategoryClick(cat)}
+              >
+                {cat}
+              </button>
+            ))}
+            {categories.map((cat) =>
+              !['Fashion', 'Cars', 'Woodworking', 'Gaming', 'Pets'].includes(cat) ? (
                 <button
                   type="button"
                   key={cat}
-                  className={`category-button ${category === cat ? 'selected' : ''}`}
+                  className={`category-button ${categories.includes(cat) ? 'selected' : ''}`}
                   onClick={() => handleCategoryClick(cat)}
                 >
                   {cat}
                 </button>
-              ))}
-              {customCategory && (
-                <button
-                  type="button"
-                  className={`category-button ${category === customCategory ? 'selected' : ''}`}
-                  onClick={() => handleCategoryClick(customCategory)}
-                >
-                  {customCategory}
-                </button>
-              )}
-            </div>
-            <button type="button" className="carousel-nav" onClick={() => document.getElementById('category-buttons').scrollLeft += 100}>
-              <CaretRightOutlined />
-            </button>
+              ) : null
+            )}
           </div>
-          <input
-            type="text"
-            value={customCategory}
-            onChange={(e) => setCustomCategory(e.target.value)}
-            onKeyPress={handleCustomCategoryKeyPress}
-            placeholder="Custom category"
-            className="custom-category-input"
-          />
+          <button type="button" className="carousel-nav" onClick={handleNextImage}>
+            <CaretRightOutlined />
+          </button>
         </div>
-        
+        <input
+          type="text"
+          value={customCategory}
+          onChange={(e) => setCustomCategory(e.target.value)}
+          placeholder="Custom category"
+          onKeyDown={handleCustomCategoryAdd}
+          className="custom-category-input"
+        />
         <label>Attach Photos or Media</label>
         <div className="image-carousel">
           <button type="button" className="image-nav" onClick={handlePrevImage}>
@@ -200,8 +195,16 @@ const PostAd = () => {
             {photoURLs.length > 0 ? (
               photoURLs.map((url, index) => (
                 <div key={index} className="thumbnail-container">
-                  <img src={url} alt={`Preview ${index}`} className="thumbnail" />
-                  <button type="button" className="remove-button" onClick={() => handleRemoveImage(index)}>
+                  <img
+                    src={url}
+                    alt={`Preview ${index}`}
+                    className="thumbnail"
+                  />
+                  <button
+                    type="button"
+                    className="remove-button"
+                    onClick={() => handleRemoveImage(index)}
+                  >
                     &times;
                   </button>
                   <input
@@ -228,17 +231,13 @@ const PostAd = () => {
           />
           Blur thumbnail
         </label>
-        <div className="form-group">
-          <label>Price</label>
-          <input
-            type="number"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            required
-            className="form-input"
-          />
-        </div>
-        
+        <label>Price</label>
+        <input
+          type="number"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          required
+        />
         <label>Tags</label>
         <div className="tag-buttons">
           {['Creator', 'Advertiser', 'Product', 'Service'].map((tag) => (
@@ -252,17 +251,12 @@ const PostAd = () => {
             </button>
           ))}
         </div>
-        
-        <div className="form-group">
-          <label>Description</label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-            className="form-input"
-          ></textarea>
-        </div>
-        
+        <label>Description</label>
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          required
+        ></textarea>
         <label>Verification Requirements</label>
         <div className="requirement-buttons">
           {[
@@ -287,7 +281,6 @@ const PostAd = () => {
             </button>
           ))}
         </div>
-        
         <button type="submit" disabled={uploading}>
           Post Ad
         </button>
@@ -296,6 +289,6 @@ const PostAd = () => {
       </form>
     </div>
   );
-};
-
-export default PostAd;
+}  
+  export default PostAd;
+  
